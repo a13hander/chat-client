@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"log"
-	"time"
 
 	authV1 "github.com/a13hander/auth-service-api/pkg/auth_v1"
 	"github.com/a13hander/chat-client/internal/auth"
@@ -52,8 +51,9 @@ func (s *ServiceProvider) GetAuthClient(ctx context.Context) auth.Client {
 
 func (s *ServiceProvider) GetChatClient(ctx context.Context) chat.Client {
 	if s.chatClient == nil {
+		conf := config.GetConfig()
 		authInterceptor := interceptor.NewAuthInterceptor(s.GetAuthClient(ctx), s.GetRedisClient())
-		authInterceptor.Run(60*time.Minute, 1*time.Minute)
+		authInterceptor.Run(conf.RefreshTokenLifeTime, conf.AccessTokenLifeTime)
 
 		conn, err := grpc.DialContext(
 			ctx,

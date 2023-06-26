@@ -23,9 +23,9 @@ func NewAuthInterceptor(authClient auth.Client, redisClient redis.Client) *AuthI
 	}
 }
 
-func (i *AuthInterceptor) Run(refreshTokenPeriod time.Duration, accessTokenPeriod time.Duration) {
+func (i *AuthInterceptor) Run(refreshTokenLifeTime time.Duration, accessTokenLifeTime time.Duration) {
 	go func() {
-		t := time.NewTicker(refreshTokenPeriod)
+		t := time.NewTicker(refreshTokenLifeTime)
 		ctx := context.Background()
 
 		for _ = range t.C {
@@ -58,7 +58,7 @@ func (i *AuthInterceptor) Run(refreshTokenPeriod time.Duration, accessTokenPerio
 	}()
 
 	go func() {
-		t := time.NewTicker(accessTokenPeriod)
+		t := time.NewTicker(accessTokenLifeTime)
 		ctx := context.Background()
 
 		for _ = range t.C {
